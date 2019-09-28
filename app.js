@@ -2,6 +2,7 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
+var session = require("express-session");
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
@@ -21,6 +22,18 @@ models.sequelize
     console.log("연결 실패");
     console.log(err);
   });
+
+app.use(
+  session({
+    key: "sid",
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
+    }
+  })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

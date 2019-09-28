@@ -34,7 +34,11 @@ router.get("/", function(req, res, next) {
 
 // 로그인 GET
 router.get("/login", function(req, res, next) {
-  res.render("user/login");
+  let session = req.session;
+
+  res.render("user/login", {
+    session: session
+  });
 });
 
 // 로그인 POST
@@ -57,11 +61,8 @@ router.post("/login", async function(req, res, next) {
 
   if (dbPassword === hashPassword) {
     console.log("비밀번호 일치");
-    // 쿠키 설정
-    res.cookie("user", body.userEmail, {
-      expires: new Date(Date.now() + 900000),
-      httpOnly: true
-    });
+    // 세션 설정
+    req.session.email = body.userEmail;
     res.redirect("/users");
   } else {
     console.log("비밀번호 불일치");
