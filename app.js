@@ -3,6 +3,8 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var session = require("express-session");
+var redis = require("redis");
+var RedisStore = require("connect-redis")(session);
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
@@ -23,8 +25,22 @@ models.sequelize
     console.log(err);
   });
 
+var redisClient = redis.createClient({
+  port: "6379",
+  host: "localhost"
+});
+
+redisClient.auth("password", function(err) {
+  if (err) throw err;
+});
+
+redisClient.on("error", function(err) {
+  console.log("Redis error: " + err);
+});
+
 app.use(
   session({
+    store: new RedisStore({ client: redisClient }),
     key: "sid",
     secret: "secret",
     resave: false,
