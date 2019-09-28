@@ -70,4 +70,12 @@ router.post("/login", async function(req, res, next) {
   }
 });
 
+// 로그아웃
+router.get("/logout", function(req, res, next) {
+  req.session.destroy();
+  res.clearCookie("sid");
+
+  res.redirect("/users/login");
+});
+
 module.exports = router;
